@@ -9,8 +9,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import TimeoutException
-
-from error_logs import check_error_logs
 from excel_utils import update_completed_status
 
 def log_message(log_file, message):
@@ -133,7 +131,16 @@ def upload_raw_files(driver, folder_path, date_folder, credentials, raw_excel, d
                     print("Department Name and File Name is matched.")
                     log_message(log_file, "Department Name and File Name is matched.")
                     update_completed_status(folder_path, department, "file uploaded")
-                    
+                    try:
+                        if os.path.exists(raw_excel):
+                            os.remove(raw_excel)
+                            print(f"Deleted file: {raw_excel}")
+                            log_message(log_file, f"Deleted file: {raw_excel}")
+                        else:
+                            log_message(log_file, f"File not found for deletion: {raw_excel}")
+                    except Exception as e:
+                        log_message(log_file, f"Error deleting file {raw_excel}: {str(e)}")
+       
         except TimeoutException:
             print("\033[91mUpload failed due to timeout:\033[0m")
             log_message(log_file, "Upload failed due to timeout")
