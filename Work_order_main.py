@@ -80,7 +80,16 @@ departments = [
 ]
 
 # departments = ["msp1"]
+def kill_excel():
+    for process in psutil.process_iter(['pid', 'name']):
+        try:
+            if process.info['name'] and process.info['name'].lower() == "excel.exe":
+                print(f"Killing Excel PID: {process.pid}")
+                process.kill()
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
 
+kill_excel()
 
 today = datetime.today().strftime("%d-%m-%Y") 
 def ensure_remarks_header(folder_path):
